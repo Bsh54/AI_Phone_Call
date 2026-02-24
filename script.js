@@ -5,18 +5,16 @@ const API_CONFIG = {
     AI_TOKEN: 'Shadobsh'
 };
 
-// État global de la conversation IA
+// État global de la conversation vocale
 let conversationState = {
-    isRecording: false,        // En cours d'enregistrement
-    isProcessing: false,       // En cours de traitement
+    isListening: false,        // En cours d'écoute
+    isPaused: false,           // En pause
+    isProcessing: false,       // Traitement IA en cours
     isSpeaking: false,         // IA en train de parler
-    isCallActive: false,       // Appel actif
-    history: [],               // Historique des messages
-    currentTranscript: '',     // Transcription actuelle
-    callStartTime: null,       // Heure de début d'appel
-    callTimer: null,           // Timer d'appel
+    isConversationActive: false, // Conversation active
     recognition: null,         // Objet reconnaissance vocale
     currentAudio: null,        // Audio en cours de lecture
+    accumulatedTranscript: '', // Transcription accumulée
     selectedVoice: null,       // Voix sélectionnée
     speechSpeed: 1.0,          // Vitesse de parole
     volume: 1.0                // Volume audio
@@ -49,6 +47,9 @@ async function initializeApp() {
         // Initialiser les contrôles audio
         initializeAudioControls();
 
+        // Activer le bouton de conversation
+        $('#startConversationBtn').prop('disabled', false);
+
     } catch (error) {
         console.error('Erreur d\'initialisation:', error);
         showToast('Erreur lors de l\'initialisation. Veuillez actualiser la page.', 'error');
@@ -66,11 +67,9 @@ async function loadVoices() {
         }
 
         const data = await response.json();
-        console.log('Données reçues:', data);
 
         if (data && data['edge-api'] && data['edge-api'].speakers) {
             availableVoices = data['edge-api'].speakers;
-            console.log('Voix disponibles:', availableVoices);
             updateVoiceSelect();
         } else {
             throw new Error('Format de données de voix invalide');
@@ -121,16 +120,12 @@ function updateVoiceSelect() {
         voiceSelect.val(frenchVoice);
         conversationState.selectedVoice = frenchVoice;
     } else if (Object.keys(organizedVoices).length > 0) {
-        // Si pas de voix française, prendre la première disponible
         const firstVoice = Object.keys(organizedVoices)[0];
         voiceSelect.val(firstVoice);
         conversationState.selectedVoice = firstVoice;
     }
 
-    console.log('Voix sélectionnées:', Object.keys(organizedVoices).length);
-    console.log('Voix française France:', Object.keys(organizedVoices).filter(k => k.startsWith('fr-FR-')).length);
-    console.log('Voix anglaise US:', Object.keys(organizedVoices).filter(k => k.startsWith('en-US-')).length);
-    console.log('Voix par défaut:', conversationState.selectedVoice);
+    console.log('Voix chargées:', Object.keys(organizedVoices).length);
 }
 
 // ===== RECONNAISSANCE VOCALE =====
@@ -151,8 +146,8 @@ function initializeSpeechRecognition() {
     // Événements de reconnaissance
     conversationState.recognition.onstart = function() {
         console.log('Reconnaissance vocale démarrée');
-        updateCallStatus('listening');
-        $('#transcriptLive').text('Parlez maintenant...');
+        conversationState.isListening = true;
+        updateUIState();
     };
 
     conversationState.recognition.onresult = function(event) {
@@ -168,47 +163,54 @@ function initializeSpeechRecognition() {
             }
         }
 
-        // Afficher la transcription en temps réel
-        const displayText = finalTranscript + interimTranscript;
-        $('#transcriptLive').text(displayText || 'Parlez maintenant...');
-
-        // Si on a une transcription finale, traiter le message
+        // Accumuler la transcription finale
         if (finalTranscript.trim()) {
-            conversationState.currentTranscript = finalTranscript.trim();
-            processUserMessage(conversationState.currentTranscript);
+            conversationState.accumulatedTranscript += finalTranscript + ' ';
+            console.log('Transcription accumulée:', conversationState.accumulatedTranscript);
         }
     };
 
     conversationState.recognition.onerror = function(event) {
         console.error('Erreur de reconnaissance vocale:', event.error);
         if (event.error === 'no-speech') {
-            showToast('Aucune parole détectée. Essayez de parler plus fort.', 'warning');
+            // Ne pas afficher d'erreur pour no-speech, c'est normal
         } else {
             showToast('Erreur de reconnaissance vocale: ' + event.error, 'error');
         }
-        updateCallStatus('waiting');
     };
 
     conversationState.recognition.onend = function() {
         console.log('Reconnaissance vocale terminée');
-        if (conversationState.isCallActive && conversationState.isRecording) {
-            // Redémarrer automatiquement si l'appel est toujours actif
+        if (conversationState.isListening && !conversationState.isPaused) {
+            // Redémarrer automatiquement si on est toujours en écoute
             setTimeout(() => {
-                if (conversationState.isCallActive && !conversationState.isProcessing) {
-                    startListening();
+                if (conversationState.isListening && !conversationState.isPaused) {
+                    conversationState.recognition.start();
                 }
-            }, 1000);
+            }, 100);
         }
     };
 }
 
-// ===== GESTION DE L'APPEL =====
+// ===== GESTION DES ÉVÉNEMENTS =====
 function setupEventListeners() {
-    // Bouton pour démarrer l'appel
-    $('#startCallBtn').on('click', startCall);
+    // Bouton pour démarrer la conversation
+    $('#startConversationBtn').on('click', startConversation);
 
-    // Bouton pour terminer l'appel
-    $('#endCallBtn').on('click', endCall);
+    // Bouton pour terminer la conversation
+    $('#endConversationBtn').on('click', endConversation);
+
+    // Bouton microphone
+    $('#micBtn').on('click', toggleListening);
+
+    // Bouton pause
+    $('#pauseBtn').on('click', pauseListening);
+
+    // Bouton continuer
+    $('#continueBtn').on('click', continueListening);
+
+    // Bouton envoyer
+    $('#sendBtn').on('click', sendToAI);
 
     // Contrôles audio
     $('#voiceSelect').on('change', function() {
@@ -227,35 +229,95 @@ function setupEventListeners() {
     });
 }
 
-function startCall() {
+// ===== GESTION DE LA CONVERSATION =====
+function startConversation() {
     // Vérifier que les paramètres sont configurés
     if (!conversationState.selectedVoice) {
-        showToast('Veuillez sélectionner une voix avant de démarrer l\'appel.', 'warning');
+        showToast('Veuillez sélectionner une voix avant de commencer.', 'warning');
         return;
     }
 
-    conversationState.isCallActive = true;
-    conversationState.callStartTime = Date.now();
+    conversationState.isConversationActive = true;
 
-    // Masquer la section de configuration et afficher la section d'appel
+    // Masquer la section de configuration et afficher la section de conversation
     $('#setupSection').hide();
-    $('#callSection').show();
+    $('#conversationSection').show();
+    $('.voice-container').addClass('conversation-active');
 
-    // Démarrer le timer d'appel
-    startCallTimer();
+    // Activer le bouton microphone
+    $('#micBtn').prop('disabled', false);
 
-    // Démarrer l'écoute
-    startListening();
-
-    showToast('Appel démarré ! Commencez à parler.', 'success');
+    updateUIState();
 }
 
-function endCall() {
-    conversationState.isCallActive = false;
-    conversationState.isRecording = false;
+function endConversation() {
+    // Arrêter tous les processus en cours
+    stopAllProcesses();
+
+    // Réinitialiser l'état
+    conversationState.isConversationActive = false;
+    conversationState.isListening = false;
+    conversationState.isPaused = false;
     conversationState.isProcessing = false;
     conversationState.isSpeaking = false;
+    conversationState.accumulatedTranscript = '';
 
+    // Masquer la section de conversation et afficher la section de configuration
+    $('#conversationSection').hide();
+    $('#setupSection').show();
+    $('.voice-container').removeClass('conversation-active processing');
+
+    updateUIState();
+}
+
+function toggleListening() {
+    if (conversationState.isListening) {
+        stopListening();
+    } else {
+        startListening();
+    }
+}
+
+function startListening() {
+    if (!conversationState.recognition || conversationState.isProcessing || conversationState.isSpeaking) {
+        return;
+    }
+
+    try {
+        conversationState.isListening = true;
+        conversationState.isPaused = false;
+        conversationState.accumulatedTranscript = ''; // Réinitialiser la transcription
+        conversationState.recognition.start();
+        updateUIState();
+    } catch (error) {
+        console.error('Erreur lors du démarrage de l\'écoute:', error);
+        showToast('Impossible de démarrer l\'écoute.', 'error');
+    }
+}
+
+function stopListening() {
+    conversationState.isListening = false;
+    if (conversationState.recognition) {
+        conversationState.recognition.stop();
+    }
+    updateUIState();
+}
+
+function pauseListening() {
+    conversationState.isPaused = true;
+    conversationState.isListening = false;
+    if (conversationState.recognition) {
+        conversationState.recognition.stop();
+    }
+    updateUIState();
+}
+
+function continueListening() {
+    conversationState.isPaused = false;
+    startListening();
+}
+
+function stopAllProcesses() {
     // Arrêter la reconnaissance vocale
     if (conversationState.recognition) {
         conversationState.recognition.stop();
@@ -266,157 +328,78 @@ function endCall() {
         conversationState.currentAudio.pause();
         conversationState.currentAudio = null;
     }
-
-    // Arrêter le timer
-    if (conversationState.callTimer) {
-        clearInterval(conversationState.callTimer);
-        conversationState.callTimer = null;
-    }
-
-    // Réinitialiser l'historique de conversation
-    conversationState.history = [];
-    $('#chatHistory').empty();
-
-    // Masquer la section d'appel et afficher la section de configuration
-    $('#callSection').hide();
-    $('#setupSection').show();
-
-    showToast('Appel terminé.', 'info');
 }
 
-function startCallTimer() {
-    conversationState.callTimer = setInterval(() => {
-        const elapsed = Date.now() - conversationState.callStartTime;
-        const minutes = Math.floor(elapsed / 60000);
-        const seconds = Math.floor((elapsed % 60000) / 1000);
-        $('#callTimer').text(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-    }, 1000);
-}
-
-// ===== GESTION DE L'ÉCOUTE =====
-function startListening() {
-    if (!conversationState.recognition || conversationState.isProcessing) {
+// ===== TRAITEMENT IA =====
+async function sendToAI() {
+    if (!conversationState.accumulatedTranscript.trim()) {
+        showToast('Aucun texte à envoyer. Parlez d\'abord.', 'warning');
         return;
     }
 
-    conversationState.isRecording = true;
-    updateCallStatus('listening');
-
-    try {
-        conversationState.recognition.start();
-    } catch (error) {
-        console.error('Erreur lors du démarrage de la reconnaissance:', error);
-        showToast('Impossible de démarrer la reconnaissance vocale.', 'error');
-    }
-}
-
-function stopListening() {
-    conversationState.isRecording = false;
-    if (conversationState.recognition) {
-        conversationState.recognition.stop();
-    }
-}
-
-// ===== TRAITEMENT DES MESSAGES =====
-async function processUserMessage(message) {
-    if (!message.trim() || conversationState.isProcessing) {
-        return;
-    }
-
-    conversationState.isProcessing = true;
-    updateCallStatus('processing');
-
-    // Arrêter l'écoute temporairement
+    // Arrêter l'écoute
     stopListening();
 
-    // Ajouter le message utilisateur à l'historique
-    addMessageToHistory('user', message);
-
-    // Effacer la transcription en cours
-    $('#transcriptLive').text('Traitement en cours...');
+    conversationState.isProcessing = true;
+    updateUIState();
 
     try {
-        // Envoyer à l'IA
-        const aiResponse = await sendToAI(message);
+        console.log('Envoi à l\'IA:', conversationState.accumulatedTranscript);
 
-        // Ajouter la réponse IA à l'historique
-        addMessageToHistory('ai', aiResponse);
+        // Préparer le message pour l'IA
+        const messages = [
+            {
+                role: 'system',
+                content: 'Tu es un assistant IA amical et serviable. Réponds de manière naturelle et conversationnelle en français. Garde tes réponses relativement courtes et engageantes.'
+            },
+            {
+                role: 'user',
+                content: conversationState.accumulatedTranscript.trim()
+            }
+        ];
+
+        const response = await fetch(API_CONFIG.AI_API, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${API_CONFIG.AI_TOKEN}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: 'deepseek-chat',
+                messages: messages,
+                max_tokens: 500,
+                temperature: 0.7
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erreur API IA: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+            throw new Error('Réponse IA invalide');
+        }
+
+        const aiResponse = data.choices[0].message.content.trim();
+        console.log('Réponse IA:', aiResponse);
 
         // Synthétiser et lire la réponse
         await speakResponse(aiResponse);
 
     } catch (error) {
-        console.error('Erreur lors du traitement du message:', error);
+        console.error('Erreur lors du traitement IA:', error);
         showToast('Erreur lors du traitement de votre message.', 'error');
 
         // Réponse d'erreur
         const errorResponse = "Désolé, j'ai rencontré un problème technique. Pouvez-vous répéter votre question ?";
-        addMessageToHistory('ai', errorResponse);
         await speakResponse(errorResponse);
     }
 
     conversationState.isProcessing = false;
-
-    // Reprendre l'écoute si l'appel est toujours actif
-    if (conversationState.isCallActive) {
-        setTimeout(() => {
-            updateCallStatus('listening');
-            $('#transcriptLive').text('Parlez maintenant...');
-            startListening();
-        }, 1000);
-    }
-}
-
-// ===== INTÉGRATION IA (DEEPSEEK) =====
-async function sendToAI(userMessage) {
-    // Préparer l'historique de conversation pour l'IA
-    const messages = [
-        {
-            role: 'system',
-            content: 'Tu es un assistant IA amical et serviable dans une conversation téléphonique. Réponds de manière naturelle et conversationnelle, comme si tu parlais au téléphone. Garde tes réponses relativement courtes et engageantes. Réponds en français.'
-        }
-    ];
-
-    // Ajouter l'historique récent (derniers 10 messages)
-    const recentHistory = conversationState.history.slice(-10);
-    recentHistory.forEach(msg => {
-        messages.push({
-            role: msg.type === 'user' ? 'user' : 'assistant',
-            content: msg.content
-        });
-    });
-
-    // Ajouter le message actuel
-    messages.push({
-        role: 'user',
-        content: userMessage
-    });
-
-    const response = await fetch(API_CONFIG.AI_API, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${API_CONFIG.AI_TOKEN}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            model: 'deepseek-chat',
-            messages: messages,
-            max_tokens: 500,
-            temperature: 0.7
-        })
-    });
-
-    if (!response.ok) {
-        throw new Error(`Erreur API IA: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-        throw new Error('Réponse IA invalide');
-    }
-
-    return data.choices[0].message.content.trim();
+    conversationState.accumulatedTranscript = ''; // Réinitialiser pour la prochaine interaction
+    updateUIState();
 }
 
 // ===== SYNTHÈSE VOCALE =====
@@ -426,7 +409,7 @@ async function speakResponse(text) {
     }
 
     conversationState.isSpeaking = true;
-    updateCallStatus('speaking');
+    updateUIState();
 
     try {
         const response = await fetch(API_CONFIG.TTS_API, {
@@ -437,7 +420,7 @@ async function speakResponse(text) {
             body: JSON.stringify({
                 text: text,
                 voice: conversationState.selectedVoice,
-                rate: Math.round((conversationState.speechSpeed - 1) * 100), // Convertir en format Edge API
+                rate: Math.round((conversationState.speechSpeed - 1) * 100),
                 pitch: 0
             })
         });
@@ -459,12 +442,14 @@ async function speakResponse(text) {
             conversationState.isSpeaking = false;
             URL.revokeObjectURL(audioUrl);
             conversationState.currentAudio = null;
+            updateUIState();
         };
 
         audio.onerror = function() {
             console.error('Erreur lors de la lecture audio');
             conversationState.isSpeaking = false;
             conversationState.currentAudio = null;
+            updateUIState();
         };
 
         // Lire l'audio
@@ -474,90 +459,86 @@ async function speakResponse(text) {
         console.error('Erreur lors de la synthèse vocale:', error);
         conversationState.isSpeaking = false;
         showToast('Erreur lors de la synthèse vocale.', 'error');
+        updateUIState();
     }
 }
 
-// ===== GESTION DE L'HISTORIQUE =====
-function addMessageToHistory(type, content) {
-    const message = {
-        type: type,
-        content: content,
-        timestamp: Date.now()
-    };
+// ===== GESTION DE L'INTERFACE UTILISATEUR =====
+function updateUIState() {
+    // Réinitialiser tous les états visuels
+    $('.process-step').removeClass('active');
+    $('.voice-container').removeClass('processing');
 
-    conversationState.history.push(message);
+    // Mettre à jour selon l'état actuel
+    if (conversationState.isListening) {
+        // État d'écoute
+        $('#statusText').text('En écoute...');
+        $('#statusIcon').removeClass().addClass('status-icon listening').html('<i class="fas fa-microphone"></i>');
+        $('#statusMessage').text('Parlez maintenant, je vous écoute');
+        $('#mainStatusIndicator').addClass('active');
+        $('#listeningStep').addClass('active');
 
-    // Limiter l'historique à 50 messages
-    if (conversationState.history.length > 50) {
-        conversationState.history = conversationState.history.slice(-50);
+        // Boutons
+        $('#micBtn').html('<i class="fas fa-stop"></i><span>Arrêter</span>');
+        $('#pauseBtn').show();
+        $('#sendBtn').show();
+        $('#continueBtn').hide();
+
+    } else if (conversationState.isPaused) {
+        // État de pause
+        $('#statusText').text('En pause');
+        $('#statusIcon').removeClass().addClass('status-icon').html('<i class="fas fa-pause"></i>');
+        $('#statusMessage').text('Conversation en pause');
+        $('#mainStatusIndicator').removeClass('active');
+
+        // Boutons
+        $('#micBtn').html('<i class="fas fa-microphone"></i><span>Parler</span>');
+        $('#pauseBtn').hide();
+        $('#sendBtn').show();
+        $('#continueBtn').show();
+
+    } else if (conversationState.isProcessing) {
+        // État de traitement
+        $('#statusText').text('IA réfléchit...');
+        $('#statusIcon').removeClass().addClass('status-icon processing').html('<i class="fas fa-brain"></i>');
+        $('#statusMessage').text('Traitement de votre message en cours');
+        $('#mainStatusIndicator').addClass('active');
+        $('#processingStep').addClass('active');
+        $('.voice-container').addClass('processing');
+
+        // Désactiver tous les boutons
+        $('.voice-btn').prop('disabled', true);
+
+    } else if (conversationState.isSpeaking) {
+        // État de parole IA
+        $('#statusText').text('IA parle...');
+        $('#statusIcon').removeClass().addClass('status-icon speaking').html('<i class="fas fa-volume-up"></i>');
+        $('#statusMessage').text('Écoutez la réponse de l\'IA');
+        $('#mainStatusIndicator').addClass('active');
+        $('#speakingStep').addClass('active');
+
+        // Désactiver tous les boutons sauf arrêt
+        $('.voice-btn').prop('disabled', true);
+        $('#micBtn').prop('disabled', false).html('<i class="fas fa-microphone"></i><span>Interrompre</span>');
+
+    } else {
+        // État d'attente
+        $('#statusText').text('Prêt à vous écouter');
+        $('#statusIcon').removeClass().addClass('status-icon').html('<i class="fas fa-microphone-slash"></i>');
+        $('#statusMessage').text('Cliquez sur le micro pour parler');
+        $('#mainStatusIndicator').removeClass('active');
+
+        // Boutons
+        $('#micBtn').html('<i class="fas fa-microphone"></i><span>Parler</span>').prop('disabled', false);
+        $('#pauseBtn').hide();
+        $('#sendBtn').hide();
+        $('#continueBtn').hide();
+        $('.voice-btn').prop('disabled', false);
     }
 
-    // Ajouter à l'interface
-    addMessageToUI(type, content);
-}
-
-function addMessageToUI(type, content) {
-    const chatHistory = $('#chatHistory');
-    const isUser = type === 'user';
-
-    const messageHtml = `
-        <div class="chat-message ${isUser ? 'user-message' : ''}">
-            <div class="${isUser ? 'user-avatar' : 'ai-avatar'}">
-                ${isUser ? '👤' : '🤖'}
-            </div>
-            <div class="message-content">
-                <strong>${isUser ? 'Vous' : 'Assistant IA'}</strong>
-                <p>${escapeHtml(content)}</p>
-            </div>
-        </div>
-    `;
-
-    chatHistory.append(messageHtml);
-
-    // Faire défiler vers le bas
-    chatHistory.scrollTop(chatHistory[0].scrollHeight);
-}
-
-// ===== GESTION DES ÉTATS VISUELS =====
-function updateCallStatus(status) {
-    // Réinitialiser tous les indicateurs
-    $('.indicator').removeClass('active');
-    $('.status-indicator').removeClass('listening processing speaking');
-
-    // Mettre à jour selon le statut
-    switch (status) {
-        case 'listening':
-            $('#callStatusText').text('En écoute');
-            $('.status-indicator').addClass('listening');
-            $('#listeningIndicator').addClass('active');
-            $('#transcriptLive').addClass('recording');
-            break;
-
-        case 'processing':
-            $('#callStatusText').text('Traitement');
-            $('.status-indicator').addClass('processing');
-            $('#processingIndicator').addClass('active');
-            $('#transcriptLive').removeClass('recording');
-            $('.phone-container').addClass('call-processing');
-            $('#callButton').addClass('processing');
-            break;
-
-        case 'speaking':
-            $('#callStatusText').text('IA parle');
-            $('.status-indicator').addClass('speaking');
-            $('#speakingIndicator').addClass('active');
-            $('#transcriptLive').removeClass('recording');
-            $('.phone-container').removeClass('call-processing');
-            $('#callButton').removeClass('processing');
-            break;
-
-        case 'waiting':
-        default:
-            $('#callStatusText').text('En attente');
-            $('#transcriptLive').removeClass('recording');
-            $('.phone-container').removeClass('call-processing');
-            $('#callButton').removeClass('processing');
-            break;
+    // Gérer l'affichage du bouton d'envoi
+    if (conversationState.accumulatedTranscript.trim() && !conversationState.isProcessing && !conversationState.isSpeaking) {
+        $('#sendBtn').show();
     }
 }
 
@@ -622,8 +603,8 @@ window.addEventListener('error', function(event) {
 
 // ===== NETTOYAGE À LA FERMETURE =====
 window.addEventListener('beforeunload', function() {
-    if (conversationState.isCallActive) {
-        endCall();
+    if (conversationState.isConversationActive) {
+        stopAllProcesses();
     }
 });
 
@@ -631,7 +612,7 @@ window.addEventListener('beforeunload', function() {
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     window.debugConversation = function() {
         console.log('État de la conversation:', conversationState);
-        console.log('Historique:', conversationState.history);
+        console.log('Transcription accumulée:', conversationState.accumulatedTranscript);
     };
 
     window.testTTS = async function(text = "Ceci est un test de synthèse vocale.") {
@@ -639,12 +620,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
     };
 
     window.testAI = async function(message = "Bonjour, comment allez-vous ?") {
-        try {
-            const response = await sendToAI(message);
-            console.log('Réponse IA:', response);
-            return response;
-        } catch (error) {
-            console.error('Erreur test IA:', error);
-        }
+        conversationState.accumulatedTranscript = message;
+        await sendToAI();
     };
 }
