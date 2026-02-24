@@ -7,19 +7,19 @@ const API_CONFIG = {
 
 // État global de la conversation IA
 let conversationState = {
-    isRecording: false,
-    isProcessing: false,
-    isSpeaking: false,
-    isCallActive: false,
-    history: [],
-    currentTranscript: '',
-    callStartTime: null,
-    callTimer: null,
-    recognition: null,
-    currentAudio: null,
-    selectedVoice: null,
-    speechSpeed: 1.0,
-    volume: 1.0
+    isRecording: false,        // En cours d'enregistrement
+    isProcessing: false,       // En cours de traitement
+    isSpeaking: false,         // IA en train de parler
+    isCallActive: false,       // Appel actif
+    history: [],               // Historique des messages
+    currentTranscript: '',     // Transcription actuelle
+    callStartTime: null,       // Heure de début d'appel
+    callTimer: null,           // Timer d'appel
+    recognition: null,         // Objet reconnaissance vocale
+    currentAudio: null,        // Audio en cours de lecture
+    selectedVoice: null,       // Voix sélectionnée
+    speechSpeed: 1.0,          // Vitesse de parole
+    volume: 1.0                // Volume audio
 };
 
 // Configuration des voix disponibles
@@ -78,7 +78,7 @@ async function loadVoices() {
     } catch (error) {
         console.error('Erreur lors du chargement des voix:', error);
 
-        // Voix de fallback : français France et anglais États-Unis seulement
+        // Voix de secours : français France et anglais États-Unis seulement
         availableVoices = {
             'fr-FR-DeniseNeural': 'Denise - Français (France)',
             'fr-FR-HenriNeural': 'Henri - Français (France)',
@@ -110,7 +110,7 @@ function updateVoiceSelect() {
         }
     });
 
-    // Ajouter les voix organisées au select
+    // Ajouter les voix organisées au sélecteur
     Object.keys(organizedVoices).forEach(key => {
         voiceSelect.append(new Option(organizedVoices[key], key));
     });

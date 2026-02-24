@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🎙️ AI Phone Call Interface
+# 🎙️ Interface d'Appel Téléphonique IA
 
-**Transform text-to-speech into natural AI conversations**
+**Transformez la synthèse vocale en conversations naturelles avec l'IA**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
@@ -10,141 +10,141 @@
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
 [![Web Speech API](https://img.shields.io/badge/Web%20Speech%20API-4285F4?logo=google-chrome&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
 
-[🚀 Live Demo](https://bsh54.github.io/AI_Phone_Call/) • [📖 Documentation](https://github.com/Bsh54/AI_Phone_Call/wiki) • [🐛 Report Bug](https://github.com/Bsh54/AI_Phone_Call/issues) • [✨ Request Feature](https://github.com/Bsh54/AI_Phone_Call/issues)
+[🚀 Démo en Direct](https://bsh54.github.io/AI_Phone_Call/) • [📖 Documentation](https://github.com/Bsh54/AI_Phone_Call/wiki) • [🐛 Signaler un Bug](https://github.com/Bsh54/AI_Phone_Call/issues) • [✨ Demander une Fonctionnalité](https://github.com/Bsh54/AI_Phone_Call/issues)
 
 </div>
 
 ---
 
-## ✨ Features
+## ✨ Fonctionnalités
 
-### 🎯 **Core Functionality**
-- 🗣️ **Real-time Voice Recognition** - Speak naturally using Web Speech API
-- 🤖 **AI Conversations** - Powered by DeepSeek AI for intelligent responses
-- 🔊 **Natural Voice Synthesis** - High-quality text-to-speech with multiple voices
-- 📱 **Phone Call Simulation** - Authentic call interface with timer and status
+### 🎯 **Fonctionnalités Principales**
+- 🗣️ **Reconnaissance Vocale en Temps Réel** - Parlez naturellement grâce à l'API Web Speech
+- 🤖 **Conversations IA** - Alimenté par DeepSeek AI pour des réponses intelligentes
+- 🔊 **Synthèse Vocale Naturelle** - Synthèse vocale de haute qualité avec plusieurs voix
+- 📱 **Simulation d'Appel Téléphonique** - Interface d'appel authentique avec minuteur et statut
 
-### 🎨 **Premium Design**
-- 🌈 **Vibrant Gradients** - Modern UI with dynamic color schemes
-- ✨ **Glassmorphism Effects** - Elegant transparency and blur effects
-- 📱 **Mobile-First Design** - Responsive interface optimized for all devices
-- 🎭 **Smooth Animations** - Fluid transitions and micro-interactions
+### 🎨 **Design Premium**
+- 🌈 **Gradients Vibrants** - Interface moderne avec des schémas de couleurs dynamiques
+- ✨ **Effets Glassmorphism** - Effets de transparence et de flou élégants
+- 📱 **Design Mobile-First** - Interface responsive optimisée pour tous les appareils
+- 🎭 **Animations Fluides** - Transitions fluides et micro-interactions
 
-### 🔧 **Technical Excellence**
-- ⚡ **Zero Dependencies** - Pure JavaScript, no frameworks required
-- 🛡️ **Security First** - Secure API handling and data protection
-- 🌐 **Cross-Browser** - Compatible with modern browsers
-- 🎛️ **Customizable** - Easy configuration and voice selection
+### 🔧 **Excellence Technique**
+- ⚡ **Zéro Dépendance** - JavaScript pur, aucun framework requis
+- 🛡️ **Sécurité Prioritaire** - Gestion sécurisée des API et protection des données
+- 🌐 **Multi-Navigateurs** - Compatible avec les navigateurs modernes
+- 🎛️ **Personnalisable** - Configuration facile et sélection de voix
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Démarrage Rapide
 
-### Prerequisites
+### Prérequis
 
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- HTTPS connection (required for Web Speech API)
-- Microphone access permission
+- Navigateur web moderne (Chrome, Firefox, Safari, Edge)
+- Connexion HTTPS (requise pour l'API Web Speech)
+- Autorisation d'accès au microphone
 
 ### Installation
 
-1. **Clone the repository**
+1. **Cloner le dépôt**
    ```bash
    git clone https://github.com/Bsh54/AI_Phone_Call.git
    cd AI_Phone_Call
    ```
 
-2. **Start a local server**
+2. **Démarrer un serveur local**
    ```bash
-   # Using Python
+   # Avec Python
    python -m http.server 8000
 
-   # Using Node.js
+   # Avec Node.js
    npx serve .
 
-   # Using PHP
+   # Avec PHP
    php -S localhost:8000
    ```
 
-3. **Open in browser**
+3. **Ouvrir dans le navigateur**
    ```
    http://localhost:8000
    ```
 
 ### Configuration
 
-Update the API configuration in `script.js`:
+Mettez à jour la configuration API dans `script.js` :
 
 ```javascript
 const API_CONFIG = {
-    TTS_API: 'your-tts-api-endpoint',
-    AI_API: 'your-ai-api-endpoint',
-    AI_TOKEN: 'your-api-token'
+    TTS_API: 'votre-endpoint-tts',
+    AI_API: 'votre-endpoint-ia',
+    AI_TOKEN: 'votre-token-api'
 };
 ```
 
 ---
 
-## 🎮 How to Use
+## 🎮 Comment Utiliser
 
-### 1. **Configure Your Call**
-- 🎤 Select your preferred voice (French or English)
-- ⚡ Adjust speech speed (0.5x - 2.0x)
-- 🔊 Set volume level (0% - 100%)
+### 1. **Configurez Votre Appel**
+- 🎤 Sélectionnez votre voix préférée (français ou anglais)
+- ⚡ Ajustez la vitesse de parole (0.5x - 2.0x)
+- 🔊 Définissez le niveau de volume (0% - 100%)
 
-### 2. **Start the Conversation**
-- 📞 Click "Démarrer l'appel" to begin
-- 🎙️ Speak naturally when prompted
-- 👀 Watch real-time transcription
+### 2. **Démarrez la Conversation**
+- 📞 Cliquez sur "Démarrer l'appel" pour commencer
+- 🎙️ Parlez naturellement quand vous y êtes invité
+- 👀 Regardez la transcription en temps réel
 
-### 3. **Enjoy Natural AI Chat**
-- 🤖 AI responds automatically with voice
-- 💬 View conversation history
-- ⏱️ Monitor call duration
+### 3. **Profitez du Chat IA Naturel**
+- 🤖 L'IA répond automatiquement avec la voix
+- 💬 Visualisez l'historique de conversation
+- ⏱️ Surveillez la durée de l'appel
 
-### 4. **End When Ready**
-- 📴 Click "Terminer l'appel" to finish
-- 🔄 Return to configuration for next call
+### 4. **Terminez Quand Vous le Souhaitez**
+- 📴 Cliquez sur "Terminer l'appel" pour finir
+- 🔄 Retournez à la configuration pour le prochain appel
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-User Voice Input → Web Speech API → Real-time Transcription → DeepSeek AI API → AI Response Text → TTS API → Audio Synthesis → Automatic Playback → Continue Conversation
+Entrée Vocale Utilisateur → API Web Speech → Transcription Temps Réel → API DeepSeek IA → Texte Réponse IA → API TTS → Synthèse Audio → Lecture Automatique → Continuer la Conversation
 ```
 
-### 🔧 **Tech Stack**
+### 🔧 **Stack Technique**
 
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| **Frontend** | HTML5, CSS3, JavaScript ES6+ | User interface and interactions |
-| **Voice Recognition** | Web Speech API | Real-time speech-to-text |
-| **AI Processing** | DeepSeek API | Intelligent conversation responses |
-| **Voice Synthesis** | Edge TTS API | High-quality text-to-speech |
-| **Styling** | CSS Grid, Flexbox, Gradients | Modern responsive design |
+| Composant | Technologie | Objectif |
+|-----------|------------|----------|
+| **Frontend** | HTML5, CSS3, JavaScript ES6+ | Interface utilisateur et interactions |
+| **Reconnaissance Vocale** | API Web Speech | Conversion parole-texte en temps réel |
+| **Traitement IA** | API DeepSeek | Réponses de conversation intelligentes |
+| **Synthèse Vocale** | API Edge TTS | Synthèse vocale de haute qualité |
+| **Stylisation** | CSS Grid, Flexbox, Gradients | Design responsive moderne |
 
 ---
 
-## 🎨 Customization
+## 🎨 Personnalisation
 
-### Voice Selection
+### Sélection de Voix
 
-The interface supports multiple voice options:
+L'interface supporte plusieurs options de voix :
 
 ```javascript
-// Available voices (filtered for quality)
+// Voix disponibles (filtrées pour la qualité)
 const voices = {
     'fr-FR-DeniseNeural': 'Denise - Français (France)',
     'fr-FR-HenriNeural': 'Henri - Français (France)',
-    'en-US-JennyNeural': 'Jenny - English (US)',
-    'en-US-GuyNeural': 'Guy - English (US)'
+    'en-US-JennyNeural': 'Jenny - Anglais (États-Unis)',
+    'en-US-GuyNeural': 'Guy - Anglais (États-Unis)'
 };
 ```
 
-### Styling Themes
+### Thèmes de Style
 
-Customize the gradient themes in `style.css`:
+Personnalisez les thèmes de gradient dans `style.css` :
 
 ```css
 :root {
@@ -156,78 +156,78 @@ Customize the gradient themes in `style.css`:
 
 ---
 
-## 🛡️ Security
+## 🛡️ Sécurité
 
-This project implements several security measures:
+Ce projet implémente plusieurs mesures de sécurité :
 
-- 🔐 **Secure API Communication** - HTTPS-only API calls
-- 🛡️ **Input Sanitization** - XSS protection for all user inputs
-- 🎤 **Privacy Protection** - No permanent voice data storage
-- 🔒 **Token Security** - Secure API token handling
+- 🔐 **Communication API Sécurisée** - Appels API HTTPS uniquement
+- 🛡️ **Assainissement des Entrées** - Protection XSS pour toutes les entrées utilisateur
+- 🎤 **Protection de la Vie Privée** - Aucun stockage permanent des données vocales
+- 🔒 **Sécurité des Tokens** - Gestion sécurisée des tokens API
 
-For detailed security information, see [SECURITY.md](SECURITY.md).
+Pour des informations détaillées sur la sécurité, voir [SECURITY.md](SECURITY.md).
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contribuer
 
-We welcome contributions! Here's how you can help:
+Nous accueillons les contributions ! Voici comment vous pouvez aider :
 
-### 🐛 **Bug Reports**
-- Use the [issue tracker](https://github.com/Bsh54/AI_Phone_Call/issues)
-- Include browser version and steps to reproduce
-- Provide console error messages if available
+### 🐛 **Rapports de Bugs**
+- Utilisez le [suivi des problèmes](https://github.com/Bsh54/AI_Phone_Call/issues)
+- Incluez la version du navigateur et les étapes pour reproduire
+- Fournissez les messages d'erreur de la console si disponibles
 
-### ✨ **Feature Requests**
-- Describe the feature and its benefits
-- Include mockups or examples if possible
-- Explain the use case
+### ✨ **Demandes de Fonctionnalités**
+- Décrivez la fonctionnalité et ses avantages
+- Incluez des maquettes ou des exemples si possible
+- Expliquez le cas d'usage
 
 ### 🔧 **Pull Requests**
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Forkez le dépôt
+2. Créez une branche de fonctionnalité (`git checkout -b feature/fonctionnalite-incroyable`)
+3. Commitez vos changements (`git commit -m 'Ajouter fonctionnalité incroyable'`)
+4. Poussez vers la branche (`git push origin feature/fonctionnalite-incroyable`)
+5. Ouvrez une Pull Request
 
 ---
 
-## 📊 Browser Support
+## 📊 Support Navigateurs
 
-| Browser | Version | Status |
-|---------|---------|--------|
-| Chrome | 25+ | ✅ Full Support |
-| Firefox | 44+ | ✅ Full Support |
-| Safari | 14.1+ | ✅ Full Support |
-| Edge | 79+ | ✅ Full Support |
+| Navigateur | Version | Statut |
+|------------|---------|--------|
+| Chrome | 25+ | ✅ Support Complet |
+| Firefox | 44+ | ✅ Support Complet |
+| Safari | 14.1+ | ✅ Support Complet |
+| Edge | 79+ | ✅ Support Complet |
 
-**Note**: Web Speech API requires HTTPS in production environments.
+**Note** : L'API Web Speech nécessite HTTPS en environnement de production.
 
 ---
 
-## 📁 Project Structure
+## 📁 Structure du Projet
 
 ```
 ai-phone-call/
-├── index.html              # Main interface
-├── script.js               # Core JavaScript logic
-├── style.css               # Premium styling
-├── speakers.json           # Voice configurations
-├── image/                  # Assets and icons
-├── cloudflare-workers/     # TTS API backend
-│   ├── index.js           # Worker script
+├── index.html              # Interface principale
+├── script.js               # Logique JavaScript principale
+├── style.css               # Stylisation premium
+├── speakers.json           # Configurations des voix
+├── image/                  # Assets et icônes
+├── cloudflare-workers/     # Backend API TTS
+│   ├── index.js           # Script worker
 │   ├── wrangler.toml      # Configuration
-│   └── README.md          # API documentation
-├── SECURITY.md            # Security guidelines
-├── .gitignore             # Git ignore rules
-└── README.md              # This file
+│   └── README.md          # Documentation API
+├── SECURITY.md            # Directives de sécurité
+├── .gitignore             # Règles d'ignore Git
+└── README.md              # Ce fichier
 ```
 
 ---
 
-## 🔧 API Configuration
+## 🔧 Configuration API
 
-### DeepSeek AI API
+### API DeepSeek IA
 ```javascript
 const AI_CONFIG = {
     endpoint: 'https://shads229-personnal-aiv2.hf.space/v1/chat/completions',
@@ -237,21 +237,21 @@ const AI_CONFIG = {
 };
 ```
 
-### TTS API (Cloudflare Workers)
+### API TTS (Cloudflare Workers)
 ```javascript
 const TTS_CONFIG = {
     endpoint: 'https://librettts-api.shadobsh.workers.dev',
-    supportedVoices: ['fr-FR-DeniseNeural', 'fr-FR-HenriNeural', 'en-US-JennyNeural', 'en-US-GuyNeural'],
-    rateRange: [-100, 100],
-    pitchRange: [-100, 100]
+    voixSupportees: ['fr-FR-DeniseNeural', 'fr-FR-HenriNeural', 'en-US-JennyNeural', 'en-US-GuyNeural'],
+    plageVitesse: [-100, 100],
+    plageTonalite: [-100, 100]
 };
 ```
 
 ---
 
-## 🚀 Deployment
+## 🚀 Déploiement
 
-### Frontend Deployment
+### Déploiement Frontend
 
 **Vercel**
 ```bash
@@ -266,11 +266,11 @@ netlify deploy --prod --dir .
 ```
 
 **GitHub Pages**
-1. Push to GitHub repository
-2. Enable GitHub Pages in repository settings
-3. Select source branch (main/master)
+1. Poussez vers le dépôt GitHub
+2. Activez GitHub Pages dans les paramètres du dépôt
+3. Sélectionnez la branche source (main/master)
 
-### Backend API (Cloudflare Workers)
+### API Backend (Cloudflare Workers)
 
 ```bash
 cd cloudflare-workers
@@ -281,36 +281,36 @@ wrangler deploy
 
 ---
 
-## 📝 License
+## 📝 Licence
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
 ---
 
-## 🙏 Acknowledgments
+## 🙏 Remerciements
 
-- **Web Speech API** - For enabling voice recognition
-- **DeepSeek AI** - For intelligent conversation capabilities
-- **Microsoft Edge TTS** - For high-quality voice synthesis
-- **Bootstrap** - For responsive design components
+- **API Web Speech** - Pour permettre la reconnaissance vocale
+- **DeepSeek IA** - Pour les capacités de conversation intelligente
+- **Microsoft Edge TTS** - Pour la synthèse vocale de haute qualité
+- **Bootstrap** - Pour les composants de design responsive
 
 ---
 
 ## 📞 Support
 
-Need help? We're here for you!
+Besoin d'aide ? Nous sommes là pour vous !
 
-- 📧 **Email**: shadrakbsh@gmail.com
-- 💬 **GitHub Discussions**: [Join our community](https://github.com/Bsh54/AI_Phone_Call/discussions)
-- 📖 **Documentation**: [Full docs](https://github.com/Bsh54/AI_Phone_Call/wiki)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/Bsh54/AI_Phone_Call/issues)
+- 📧 **Email** : shadrakbsh@gmail.com
+- 💬 **Discussions GitHub** : [Rejoignez notre communauté](https://github.com/Bsh54/AI_Phone_Call/discussions)
+- 📖 **Documentation** : [Documentation complète](https://github.com/Bsh54/AI_Phone_Call/wiki)
+- 🐛 **Problèmes** : [GitHub Issues](https://github.com/Bsh54/AI_Phone_Call/issues)
 
 ---
 
 <div align="center">
 
-**Made with ❤️ for the future of human-AI interaction**
+**Fait avec ❤️ pour l'avenir de l'interaction humain-IA**
 
-[⭐ Star this repo](https://github.com/Bsh54/AI_Phone_Call) • [🍴 Fork it](https://github.com/Bsh54/AI_Phone_Call/fork) • [📢 Share it](https://twitter.com/intent/tweet?text=Check%20out%20this%20amazing%20AI%20Phone%20Call%20interface!%20https://github.com/Bsh54/AI_Phone_Call)
+[⭐ Étoiler ce dépôt](https://github.com/Bsh54/AI_Phone_Call) • [🍴 Le forker](https://github.com/Bsh54/AI_Phone_Call/fork) • [📢 Le partager](https://twitter.com/intent/tweet?text=Découvrez%20cette%20incroyable%20interface%20d'appel%20téléphonique%20IA%20!%20https://github.com/Bsh54/AI_Phone_Call)
 
 </div>
