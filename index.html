@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Balises SEO principales -->
+    <title>AI Phone Call | Interface d'Appel Téléphonique IA Premium - LibreTTS</title>
+    <meta name="description" content="Interface premium d'appel téléphonique avec IA conversationnelle. Parlez naturellement avec l'IA grâce à la reconnaissance vocale et synthèse vocale en temps réel.">
+    <meta name="keywords" content="appel IA,téléphone IA,conversation IA,reconnaissance vocale,synthèse vocale,DeepSeek,interface premium">
+    <meta name="author" content="Zwei">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://libretts.is-an.org/">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="AI Phone Call | Interface d'Appel Téléphonique IA Premium">
+    <meta property="og:description" content="Interface premium d'appel téléphonique avec IA conversationnelle en temps réel.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://libretts.is-an.org/">
+    <meta property="og:image" content="https://libretts.is-an.org/image/TTS.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Phone Call | Interface d'Appel Téléphonique IA Premium">
+    <meta name="twitter:description" content="Interface premium d'appel téléphonique avec IA conversationnelle en temps réel.">
+    <meta name="twitter:image" content="https://libretts.is-an.org/image/TTS.png">
+
+    <!-- Styles -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Icônes -->
+    <link rel="icon" type="image/png" href="image/TTS.png">
+    <link rel="apple-touch-icon" href="image/TTS.png">
+
+    <!-- Préchargement -->
+    <link rel="preload" href="style.css" as="style">
+    <link rel="preload" href="script.js" as="script">
+
+    <!-- Analytics -->
+    <script defer src="https://umami.zwei.de.eu.org/script.js" data-website-id="70106ca4-d1e5-4563-b574-ba09c3b5db16"></script>
+</head>
+<body>
+    <!-- Interface d'appel téléphonique -->
+    <div class="phone-container">
+        <!-- Configuration initiale -->
+        <div class="setup-section" id="setupSection">
+            <div class="setup-header">
+                <h2>Configuration de l'appel</h2>
+            </div>
+
+            <div class="setup-controls">
+                <div class="control-group">
+                    <label>Voix :</label>
+                    <select class="form-control" id="voiceSelect">
+                        <option value="">Chargement...</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Vitesse : <span id="speedValue">1.0x</span></label>
+                    <input type="range" class="form-control-range" id="speedControl" min="0.5" max="2.0" step="0.1" value="1.0">
+                </div>
+
+                <div class="control-group">
+                    <label>Volume : <span id="volumeValue">100%</span></label>
+                    <input type="range" class="form-control-range" id="volumeControl" min="0" max="100" step="5" value="100">
+                </div>
+
+                <button class="start-call-btn" id="startCallBtn">
+                    <i class="fas fa-phone"></i>
+                    Démarrer l'appel
+                </button>
+            </div>
+        </div>
+
+        <!-- Interface d'appel active -->
+        <div class="call-section" id="callSection" style="display: none;">
+            <!-- En-tête avec statut d'appel -->
+            <div class="call-header">
+                <div class="call-status">
+                    <div class="status-indicator"></div>
+                    <span id="callStatusText">En écoute</span>
+                </div>
+                <div class="call-timer" id="callTimer">00:00</div>
+            </div>
+
+            <!-- Zone de conversation -->
+            <div class="conversation-area">
+                <!-- Transcription en temps réel -->
+                <div class="transcript-section">
+                    <div class="transcript-live" id="transcriptLive">Parlez maintenant...</div>
+                </div>
+
+                <!-- Historique de conversation -->
+                <div class="chat-history" id="chatHistory"></div>
+            </div>
+
+            <!-- Bouton pour terminer l'appel -->
+            <div class="call-controls">
+                <button class="end-call-btn" id="endCallBtn">
+                    <i class="fas fa-phone-slash"></i>
+                    Terminer l'appel
+                </button>
+            </div>
+
+            <!-- Indicateurs d'état -->
+            <div class="status-indicators">
+                <div class="indicator" id="listeningIndicator">
+                    <i class="fas fa-microphone"></i>
+                    <span>Écoute</span>
+                </div>
+                <div class="indicator" id="processingIndicator">
+                    <i class="fas fa-brain"></i>
+                    <span>Traitement</span>
+                </div>
+                <div class="indicator" id="speakingIndicator">
+                    <i class="fas fa-volume-up"></i>
+                    <span>Parle</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio caché pour la lecture -->
+    <audio id="responseAudio" style="display: none;"></audio>
+
+    <!-- Overlay de chargement -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Connexion à l'IA...</div>
+        </div>
+    </div>
+
+    <!-- Toast pour les notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
