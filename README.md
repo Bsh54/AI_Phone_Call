@@ -10,7 +10,7 @@
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
 [![Web Speech API](https://img.shields.io/badge/Web%20Speech%20API-4285F4?logo=google-chrome&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
 
-[🚀 Live Demo](https://your-demo-url.com) • [📖 Documentation](https://github.com/yourusername/ai-phone-call/wiki) • [🐛 Report Bug](https://github.com/yourusername/ai-phone-call/issues) • [✨ Request Feature](https://github.com/yourusername/ai-phone-call/issues)
+[🚀 Live Demo](https://bsh54.github.io/AI_Phone_Call/) • [📖 Documentation](https://github.com/Bsh54/AI_Phone_Call/wiki) • [🐛 Report Bug](https://github.com/Bsh54/AI_Phone_Call/issues) • [✨ Request Feature](https://github.com/Bsh54/AI_Phone_Call/issues)
 
 </div>
 
@@ -50,8 +50,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/ai-phone-call.git
-   cd ai-phone-call
+   git clone https://github.com/Bsh54/AI_Phone_Call.git
+   cd AI_Phone_Call
    ```
 
 2. **Start a local server**
@@ -174,7 +174,7 @@ For detailed security information, see [SECURITY.md](SECURITY.md).
 We welcome contributions! Here's how you can help:
 
 ### 🐛 **Bug Reports**
-- Use the [issue tracker](https://github.com/yourusername/ai-phone-call/issues)
+- Use the [issue tracker](https://github.com/Bsh54/AI_Phone_Call/issues)
 - Include browser version and steps to reproduce
 - Provide console error messages if available
 
@@ -300,10 +300,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Need help? We're here for you!
 
-- 📧 **Email**: support@yourproject.com
-- 💬 **Discord**: [Join our community](https://discord.gg/yourserver)
-- 📖 **Documentation**: [Full docs](https://github.com/yourusername/ai-phone-call/wiki)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/ai-phone-call/issues)
+- 📧 **Email**: shadrakbsh@gmail.com
+- 💬 **GitHub Discussions**: [Join our community](https://github.com/Bsh54/AI_Phone_Call/discussions)
+- 📖 **Documentation**: [Full docs](https://github.com/Bsh54/AI_Phone_Call/wiki)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/Bsh54/AI_Phone_Call/issues)
 
 ---
 
@@ -311,6 +311,6 @@ Need help? We're here for you!
 
 **Made with ❤️ for the future of human-AI interaction**
 
-[⭐ Star this repo](https://github.com/yourusername/ai-phone-call) • [🍴 Fork it](https://github.com/yourusername/ai-phone-call/fork) • [📢 Share it](https://twitter.com/intent/tweet?text=Check%20out%20this%20amazing%20AI%20Phone%20Call%20interface!)
+[⭐ Star this repo](https://github.com/Bsh54/AI_Phone_Call) • [🍴 Fork it](https://github.com/Bsh54/AI_Phone_Call/fork) • [📢 Share it](https://twitter.com/intent/tweet?text=Check%20out%20this%20amazing%20AI%20Phone%20Call%20interface!%20https://github.com/Bsh54/AI_Phone_Call)
 
 </div>
