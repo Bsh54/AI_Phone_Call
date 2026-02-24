@@ -5,7 +5,7 @@ const API_CONFIG = {
     AI_TOKEN: 'Shadobsh'
 };
 
-// État global de la conversation
+// État global de la conversation IA
 let conversationState = {
     isRecording: false,
     isProcessing: false,
