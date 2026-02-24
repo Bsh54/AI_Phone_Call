@@ -442,6 +442,14 @@ async function speakResponse(text) {
             conversationState.isSpeaking = false;
             URL.revokeObjectURL(audioUrl);
             conversationState.currentAudio = null;
+
+            // Redémarrer automatiquement l'écoute après que l'IA ait fini de parler
+            setTimeout(() => {
+                if (conversationState.isConversationActive) {
+                    startListening();
+                }
+            }, 500); // Petite pause de 500ms avant de redémarrer l'écoute
+
             updateUIState();
         };
 
@@ -522,10 +530,16 @@ function updateUIState() {
         $('#micBtn').prop('disabled', false).html('<i class="fas fa-microphone"></i><span>Interrompre</span>');
 
     } else {
-        // État d'attente
-        $('#statusText').text('Prêt à vous écouter');
-        $('#statusIcon').removeClass().addClass('status-icon').html('<i class="fas fa-microphone-slash"></i>');
-        $('#statusMessage').text('Cliquez sur le micro pour parler');
+        // État d'attente/prêt
+        if (conversationState.isConversationActive) {
+            $('#statusText').text('Prêt à vous écouter');
+            $('#statusIcon').removeClass().addClass('status-icon').html('<i class="fas fa-microphone-slash"></i>');
+            $('#statusMessage').text('Cliquez sur le micro pour parler ou attendez le redémarrage automatique');
+        } else {
+            $('#statusText').text('Prêt à vous écouter');
+            $('#statusIcon').removeClass().addClass('status-icon').html('<i class="fas fa-microphone-slash"></i>');
+            $('#statusMessage').text('Cliquez sur le micro pour parler');
+        }
         $('#mainStatusIndicator').removeClass('active');
 
         // Boutons
